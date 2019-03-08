@@ -1,0 +1,20 @@
+{
+  "name": "cloudwatch_to_papertrail",
+  "version": "1.0.0",
+  "description": "Lambda to send cloudwatch logs to papertrail",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "winston": "<3",
+    "winston-papertrail": "kenperkins/winston-papertrail"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "winston-transport": "^4.2.0"
+  }
+}

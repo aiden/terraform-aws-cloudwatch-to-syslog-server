@@ -1,0 +1,21 @@
+# Terraform files
+.terraform
+terraform.tfstate
+terraform.tfvars
+*.tfstate*
+
+# OS X files
+.history
+.DS_Store
+
+# Go best practices dictate that libraries should not include the vendor directory
+vendor
+
+# Folder used to store temporary test data by Terratest
+.test-data
+
+# Zip files
+*.zip
+
+# NodeJS
+node_modules
