@@ -22,11 +22,11 @@ function mandatoryEnvVar(envVarName) {
   return value;
 }
 
-/** Syslog server port to send syslogs to. */
-const SYSLOG_SERVER_HOST = parseInt(mandatoryEnvVar("SYSLOG_SERVER_HOST"), 10);
-
 /** Syslog server host to send syslogs to. */
-const SYSLOG_SERVER_PORT = mandatoryEnvVar("SYSLOG_SERVER_PORT");
+const SYSLOG_SERVER_HOST = mandatoryEnvVar("SYSLOG_SERVER_HOST");
+
+/** Syslog server port to send syslogs to. */
+const SYSLOG_SERVER_PORT = parseInt(mandatoryEnvVar("SYSLOG_SERVER_PORT"), 10);
 
 /** Whether to disable sending the syslogs over TLS and use a raw TCP stream. */
 const DISABLE_TLS = process.env["DISABLE_TLS"] === "1";

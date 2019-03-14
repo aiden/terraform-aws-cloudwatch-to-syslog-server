@@ -1,7 +1,7 @@
 package test
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"regexp"
 	"strings"
@@ -11,6 +11,7 @@ import (
 	aws_sdk "github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/gruntwork-io/terratest/modules/aws"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -51,9 +52,13 @@ func TestExample(t *testing.T) {
 		keyPair := test_structure.LoadEc2KeyPair(t, terraformDir)
 		aws.DeleteEC2KeyPair(t, keyPair)
 
+		// Delete the log group used for the logs of the AWS Lambda function itself.
+		// This log group is automatically created by AWS, and not managed by
+		// Terraform.
 		logsClient := aws.NewCloudWatchLogsClient(t, awsRegion)
+		lambdaArn := test_structure.LoadString(t, terraformDir, "lambdaArn")
 		if _, err := logsClient.DeleteLogGroup(&cloudwatchlogs.DeleteLogGroupInput{
-			LogGroupName: prefix + "lg_" + uniqueID,
+			LogGroupName: aws_sdk.String(awsLambdaLogGroup(lambdaArn)),
 		}); err != nil {
 			t.Errorf("cannot delete AWS Lambda log group: %v", err)
 		}
@@ -120,7 +125,7 @@ func TestExample(t *testing.T) {
 				return "", err
 			}
 			if !strings.Contains(logs, userDataReadyString) {
-				return logs, fmt.Errorf("cannot find ready signal in logs", logs)
+				return logs, errors.New("cannot find ready signal in logs")
 			}
 			return logs, nil
 		})
@@ -133,10 +138,16 @@ func TestExample(t *testing.T) {
 		}
 
 		// Wait for ncat, actually launched in the background, to be fully up.
-		time.Sleep(1 * time.Second)
+		// TODO: Remove this potential source of flakiness (but for doing that
+		// we need to inspec the logs of the AWS Lambda function to know whether
+		// the function was able to connect).
+		time.Sleep(3 * time.Second)
 
+		lambdaArn := terraform.Output(t, terraformOptions, "lambda_arn")
 		logGroup := terraform.Output(t, terraformOptions, "log_group")
 		logStream := terraform.Output(t, terraformOptions, "log_stream")
+
+		test_structure.SaveString(t, terraformDir, "lambdaArn", lambdaArn)
 
 		logsClient := aws.NewCloudWatchLogsClient(t, awsRegion)
 		if _, err := logsClient.PutLogEvents(&cloudwatchlogs.PutLogEventsInput{
@@ -155,12 +166,9 @@ func TestExample(t *testing.T) {
 			t.Error(err)
 		}
 
-		// Wait for the log event to be forwarded by the AWS lambda function
-		time.Sleep(1 * time.Second)
-
-		// Get the TCP session dump captured by ncat
-		ncatSession := retry.DoWithRetry(t, "get ncat-session.log", 10, 1*time.Second, func() (string, error) {
-			return aws.FetchContentsOfFileFromInstanceE(
+		ncatSession, err := retry.DoWithRetryE(t, "get ncat-session.log", 10, 1*time.Second, func() (string, error) {
+			// Get the TCP session dump captured by ncat
+			ncatSession, err := aws.FetchContentsOfFileFromInstanceE(
 				t,
 				awsRegion,
 				"ubuntu",
@@ -169,14 +177,76 @@ func TestExample(t *testing.T) {
 				true,
 				"/var/log/ncat-session.log",
 			)
-		})
+			if err != nil {
+				return "", err
+			}
 
-		// Check that the TCP session dump contains the log event that we sent on cloudwatch,
-		// and that the format is indeed that of a syslog.
-		hostname := logGroup
-		program := logStream
-		if !regexp.MustCompile(`<30>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z ` + hostname + ` ` + program + ` - - - Hello, world.*`).MatchString(ncatSession) {
+			// Check that the TCP session dump contains the log event that we sent on cloudwatch,
+			// and that the format is indeed that of a syslog.
+			hostname := logGroup
+			program := logStream
+			regexStr := `<30>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,3}Z ` + hostname + ` ` + program + ` - - - Hello, world.*`
+			if !regexp.MustCompile(regexStr).MatchString(ncatSession) {
+				return ncatSession, errors.New("ncatSession does not match regex <<" + regexStr + ">>")
+			}
+			return ncatSession, nil
+		})
+		if err != nil {
 			t.Errorf("ncatSession does not match regex: <<%s>>", ncatSession)
 		}
+
+		// In case of failure, it might be useful to get the logs for the AWS
+		// Lambda function
+		awsLambdaLogs, err := retry.DoWithRetryE(t, "get AWS Lambda Logs", 5, 1*time.Second, func() (string, error) {
+			logGroupName := aws_sdk.String(awsLambdaLogGroup(lambdaArn))
+
+			// Get the name of the first log stream we encounter in the log group
+			logStreams, err := logsClient.DescribeLogStreams(&cloudwatchlogs.DescribeLogStreamsInput{
+				LogGroupName: logGroupName,
+			})
+			if len(logStreams.LogStreams) == 0 {
+				return "", errors.New("no log stream found in log group ")
+			}
+			logStreamName := logStreams.LogStreams[0].LogStreamName
+
+			// Join all the log messages in the log stream
+			var awsLambdaLogs string
+			if err != nil {
+				return "", err
+			} else if err := logsClient.GetLogEventsPages(&cloudwatchlogs.GetLogEventsInput{
+				LogGroupName:  logGroupName,
+				LogStreamName: logStreamName,
+			}, func(output *cloudwatchlogs.GetLogEventsOutput, lastPage bool) bool {
+				for _, event := range output.Events {
+					awsLambdaLogs += *event.Message
+				}
+				return true
+			}); err != nil {
+				return "", err
+			}
+
+			// Check that the log messages are complete.  An AWS Lambda invocation by
+			// defaults end with a "REPORT" log message.
+			if !strings.Contains(awsLambdaLogs, "\nREPORT") {
+				return "", errors.New("awsLambdaLogs does not match regex")
+			}
+			return awsLambdaLogs, nil
+		})
+
+		if err != nil {
+			t.Error(err)
+		}
+		logger.Logf(t, "AWS Lambda logs:\n------\n%s------", awsLambdaLogs)
 	})
+}
+
+// awsLambdaNameFromArn gets the name of a Lambda function from its ARN.
+func awsLambdaNameFromArn(lambdaArn string) string {
+	return lambdaArn[strings.LastIndex(lambdaArn, ":")+1:]
+}
+
+// awsLambdaLogGroup returns the log group where the logs for a Lambda function
+// with the given ARN are outputted.
+func awsLambdaLogGroup(lambdaArn string) string {
+	return "/aws/lambda/" + awsLambdaNameFromArn(lambdaArn)
 }

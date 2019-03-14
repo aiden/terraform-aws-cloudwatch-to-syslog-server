@@ -45,7 +45,7 @@ module "cloudwatch_to_syslog_server" {
 }
 
 output lambda_arn {
-  value = "${module.bot_cluster_cloudwatch_to_papertrail.lambda_arn}"
+  value = "${module.cloudwatch_to_syslog_server.lambda_arn}"
 }
 
 output log_group {
