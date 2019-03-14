@@ -52,7 +52,7 @@ jobs:
 
   build_go:
     docker:
-      - image: hashicorp/terraform:1.12.0-stretch
+      - image: golang:1.12.0-stretch
     working_directory: /tmp/workspace/terraform
     steps:
       - attach_workspace:
