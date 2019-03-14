@@ -33,13 +33,11 @@ jobs:
       - run:
           name: "Enforce Go Formatted Code"
           command: "! go fmt ./... 2>&1 | read"
-      - persist_to_workspace:
-          root: .
-          paths: .
 
   build_nodejs:
     <<: *nodejs
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run: make build
@@ -77,8 +75,12 @@ workflows:
     jobs:
       - validate
       - build_nodejs
-      - build_go
+      - build_go:
+          requires:
+            - build_nodejs
       - e2e_test:
+          requires:
+            - build_go
           filters:
             branches:
               only: master
