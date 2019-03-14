@@ -76,7 +76,8 @@ workflows:
   all:
     jobs:
       - validate
-      - build
+      - build_nodejs
+      - build_go
       - e2e_test:
           filters:
             branches:
