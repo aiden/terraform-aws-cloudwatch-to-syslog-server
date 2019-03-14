@@ -52,10 +52,10 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - dep-{{ checksum "Gopkg.lock" }}
+            - dep-{{ checksum "test/Gopkg.lock" }}
       - run: make install
       - save_cache:
-          key: dep-{{ checksum "Gopkg.lock" }}
+          key: dep-{{ checksum "test/Gopkg.lock" }}
           paths:
             - ./test/vendor
       - persist_to_workspace:
