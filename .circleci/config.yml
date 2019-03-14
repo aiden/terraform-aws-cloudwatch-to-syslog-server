@@ -51,7 +51,9 @@ jobs:
           paths: .
 
   build_go:
-    <<: *terraform_full
+    docker:
+      - image: hashicorp/terraform:1.12.0-stretch
+    working_directory: /tmp/workspace/terraform
     steps:
       - attach_workspace:
           at: .
@@ -69,7 +71,7 @@ jobs:
           paths: .
 
   e2e_test:
-    <<: *terraform
+    <<: *terraform_full
     steps:
       - attach_workspace:
           at: .
