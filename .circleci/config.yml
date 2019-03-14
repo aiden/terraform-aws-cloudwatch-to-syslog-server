@@ -2,7 +2,7 @@ version: 2
 
 terraform: &terraform
   docker:
-    - image: hashicorp/terraform:full
+    - image: hashicorp/terraform:0.10.4
   working_directory: /tmp/workspace/terraform
 
 nodejs: &nodejs
@@ -53,8 +53,7 @@ jobs:
       - restore_cache:
           keys:
             - dep-{{ checksum "test/Gopkg.lock" }}
-      # - run: apt-get update && apt-get install -y build-essential
-      - run: make install
+      - run: cd test && dep ensure
       - save_cache:
           key: dep-{{ checksum "test/Gopkg.lock" }}
           paths:
@@ -68,7 +67,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: make test
+      - run: cd test && go test
 
 workflows:
   version: 2
