@@ -5,6 +5,11 @@ terraform: &terraform
     - image: hashicorp/terraform:0.10.4
   working_directory: /tmp/workspace/terraform
 
+terraform_full: &terraform_full
+  docker:
+    - image: hashicorp/terraform:full
+  working_directory: /tmp/workspace/terraform
+
 nodejs: &nodejs
   docker:
     - image: circleci/node:latest
@@ -46,7 +51,7 @@ jobs:
           paths: .
 
   build_go:
-    <<: *terraform
+    <<: *terraform_full
     steps:
       - attach_workspace:
           at: .
