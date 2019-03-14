@@ -2,7 +2,7 @@ version: 2
 
 terraform: &terraform
   docker:
-    - image: hashicorp/terraform:0.10.4
+    - image: hashicorp/terraform:full
   working_directory: /tmp/workspace/terraform
 
 nodejs: &nodejs
@@ -53,7 +53,7 @@ jobs:
       - restore_cache:
           keys:
             - dep-{{ checksum "test/Gopkg.lock" }}
-      - run: apt-get update && apt-get install -y build-essential
+      # - run: apt-get update && apt-get install -y build-essential
       - run: make install
       - save_cache:
           key: dep-{{ checksum "test/Gopkg.lock" }}
