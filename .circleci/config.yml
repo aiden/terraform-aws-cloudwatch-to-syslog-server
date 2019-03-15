@@ -72,6 +72,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - run: mkdir -p /go/src/github.com/hashicorp/terraform && cd /go/src/github.com/hashicorp/terraform && git clone https://github.com/hashicorp/terraform.git ./ && git checkout v0.10.4 && /bin/bash scripts/build.sh
       - run: cd test && go test
 
 workflows:
