@@ -72,7 +72,16 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: mkdir -p /go/src/github.com/hashicorp/terraform && cd /go/src/github.com/hashicorp/terraform && git clone https://github.com/hashicorp/terraform.git ./ && git checkout v0.10.4 && /bin/bash scripts/build.sh
+      - run:
+          name: Download terraform
+          command: |
+            set -eou pipefail
+            platform=linux_amd64
+            version=0.11.10
+            curl -L "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_${platform}.zip" > terraform.zip
+            unzip terraform.zip
+            rm terraform.zip
+            mv terraform /usr/local/bin
       - run: cd test && go test
 
 workflows:
