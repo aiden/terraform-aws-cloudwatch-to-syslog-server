@@ -60,7 +60,7 @@ jobs:
       - restore_cache:
           keys:
             - dep-{{ checksum "test/Gopkg.lock" }}
-      - run: apt-get update && apt-get install -yq go-dep
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       - run: cd test && dep ensure
       - save_cache:
           key: dep-{{ checksum "test/Gopkg.lock" }}
