@@ -78,6 +78,8 @@ jobs:
             set -eou pipefail
             platform=linux_amd64
             version=0.11.10
+            apt-get update
+            apt-get install -yq unzip
             curl -L "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_${platform}.zip" > terraform.zip
             unzip terraform.zip
             rm terraform.zip
