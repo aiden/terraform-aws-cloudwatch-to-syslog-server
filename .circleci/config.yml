@@ -56,7 +56,7 @@ jobs:
           keys:
             - dep-{{ checksum "test/Gopkg.lock" }}
       - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-      - run: cd test && dep ensure
+      - run: cd test && dep ensure -v
       - save_cache:
           key: dep-{{ checksum "test/Gopkg.lock" }}
           paths:
