@@ -2,6 +2,8 @@
 
 [![Maintained by aiden.ai](https://img.shields.io/badge/maintained%20by-aiden.ai-blue.svg)](https://aiden.ai) [![CircleCI](https://circleci.com/gh/aiden/cloudwatch_to_syslog_server/tree/master.svg?style=svg)](https://circleci.com/gh/aiden/cloudwatch_to_syslog_server/tree/master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![cloudwatch_to_syslog_server](./docs/cloudwatch_to_syslog_server.svg)](./docs/cloudwatch_to_syslog_server.svg)
+
 cloudwatch_to_syslog_server is a Terraform module that defines an AWS Lambda function
 to forward the CloudWatch logs of a given log group to a syslog server. Many third-party services offer to collect logs with a syslog server, for instance:
 
@@ -9,8 +11,6 @@ to forward the CloudWatch logs of a given log group to a syslog server. Many thi
 - [logstash](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-syslog.html)
   (from the [ELK stack](https://www.elastic.co/elk-stack))
 - [Datadog](https://docs.datadoghq.com/logs/?tab=ussite#log-collection)
-
-[![cloudwatch_to_syslog_server](./docs/cloudwatch_to_syslog_server.svg)](./docs/cloudwatch_to_syslog_server.svg)
 
 ## Example
 
