@@ -10,6 +10,8 @@ to forward the CloudWatch logs of a given log group to a syslog server. Many thi
   (from the [ELK stack](https://www.elastic.co/elk-stack))
 - [Datadog](https://docs.datadoghq.com/logs/?tab=ussite#log-collection)
 
+[![cloudwatch_to_syslog_server](./docs/cloudwatch_to_syslog_server.svg)](./docs/cloudwatch_to_syslog_server.svg)
+
 ## Example
 
 You can find an example Terraform configuration in the [example folder](./example).
