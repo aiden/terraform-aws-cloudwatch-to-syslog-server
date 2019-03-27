@@ -27,7 +27,7 @@ const prefix = "cw2pt_" // cw2pt = cloudwatch to papertrail
 const userDataReadyString = "--- READY ---"
 
 // Test that logs to cloudwatch are properly sent to a TCP syslog server using the
-// example terraform configuration in `../example`.
+// example terraform configuration in `../examples/simple`.
 func TestExample(t *testing.T) {
 	t.Parallel()
 
@@ -41,7 +41,7 @@ func TestExample(t *testing.T) {
 		awsRegion = aws.GetRandomStableRegion(t, nil, nil)
 	}
 
-	terraformDir := test_structure.CopyTerraformFolderToTemp(t, "../", "example")
+	terraformDir := test_structure.CopyTerraformFolderToTemp(t, "../", "examples/simple")
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that
 	// were created.

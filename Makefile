@@ -8,5 +8,5 @@ build:
 	rm -f lambda.zip
 	(cd lambda; zip --quiet ../lambda.zip -r *)
 
-test: test/**/* example/**/* *.tf
+test: test/**/* examples/**/* *.tf
 	(cd test; go test)

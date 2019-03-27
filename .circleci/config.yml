@@ -48,7 +48,7 @@ jobs:
   build_go:
     docker:
       - image: golang:1.12.0-stretch
-    working_directory: /go/src/github.com/aiden/cloudwatch_to_syslog_server
+    working_directory: /go/src/github.com/aiden/terraform-aws-cloudwatch-to-syslog-server
     steps:
       - attach_workspace:
           at: .
@@ -68,7 +68,7 @@ jobs:
   e2e_test:
     docker:
       - image: golang:1.12.0-stretch
-    working_directory: /go/src/github.com/aiden/cloudwatch_to_syslog_server
+    working_directory: /go/src/github.com/aiden/terraform-aws-cloudwatch-to-syslog-server
     steps:
       - attach_workspace:
           at: .

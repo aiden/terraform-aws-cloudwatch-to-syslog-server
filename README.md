@@ -1,10 +1,10 @@
-# cloudwatch_to_syslog_server: A Terraform module to send CloudWatch logs to a syslog server
+# cloudwatch-to-syslog-server: A Terraform module to send CloudWatch logs to a syslog server
 
-[![Maintained by aiden.ai](https://img.shields.io/badge/maintained%20by-aiden.ai-blue.svg)](https://aiden.ai) [![CircleCI](https://circleci.com/gh/aiden/cloudwatch_to_syslog_server/tree/master.svg?style=svg)](https://circleci.com/gh/aiden/cloudwatch_to_syslog_server/tree/master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintained by aiden.ai](https://img.shields.io/badge/maintained%20by-aiden.ai-blue.svg)](https://aiden.ai) [![CircleCI](https://circleci.com/gh/aiden/terraform-aws-cloudwatch-to-syslog-server/tree/master.svg?style=svg)](https://circleci.com/gh/aiden/terraform-aws-cloudwatch-to-syslog-server/tree/master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[![cloudwatch_to_syslog_server](./docs/cloudwatch_to_syslog_server.svg)](./docs/cloudwatch_to_syslog_server.svg)
+[![cloudwatch-to-syslog-server](./docs/cloudwatch-to-syslog-server.svg)](./docs/cloudwatch-to-syslog-server.svg)
 
-cloudwatch_to_syslog_server is a Terraform module that defines an AWS Lambda function
+cloudwatch-to-syslog-server is a Terraform module that defines an AWS Lambda function
 to forward the CloudWatch logs of a given log group to a syslog server. Many third-party services offer to collect logs with a syslog server, for instance:
 
 - [Papertrail](https://papertrailapp.com/)
@@ -14,9 +14,9 @@ to forward the CloudWatch logs of a given log group to a syslog server. Many thi
 
 ## Example
 
-You can find an example Terraform configuration in the [example folder](./example).
+You can find an example Terraform configuration in the [example folder](./examples/simple).
 
-## Why cloudwatch_to_syslog_server?
+## Why cloudwatch-to-syslog-server?
 
 AWS CloudWatch is meant for durable and scalable log archiving. It is tightly
 integrated with ECS and, overall, the AWS ecosystem, which makes it an interesting
@@ -55,4 +55,4 @@ and one syslog program per ECS service.
 
 ## License
 
-cloudwatch_to_syslog_server is licensed under the MIT License.
+cloudwatch-to-syslog-server is licensed under the MIT License.

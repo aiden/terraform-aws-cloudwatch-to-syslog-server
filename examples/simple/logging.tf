@@ -29,7 +29,7 @@ resource "aws_cloudwatch_log_stream" "log_stream" {
 }
 
 module "cloudwatch_to_syslog_server" {
-  source = ".."
+  source = "../.."
 
   name       = "cloudwatch-to-syslog-server-${var.log_group}"
   region     = "${var.region}"
