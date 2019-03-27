@@ -14,7 +14,7 @@ to forward the CloudWatch logs of a given log group to a syslog server. Many thi
 
 ## Example
 
-You can find an example Terraform configuration in the [example folder](./examples/simple).
+You can find an example Terraform configuration in the [example folder](https://github.com/aiden/terraform-aws-cloudwatch-to-syslog-server/tree/master/examples/simple).
 
 ## Why cloudwatch-to-syslog-server?
 
