@@ -18,7 +18,7 @@ variable log_group {
 }
 
 variable syslog_server_host {
-  description = "The host for the syslog server (e.g., `logs5.papertrailapp.com`)."
+  description = "The host for the syslog server (e.g., logs5.papertrailapp.com)."
 }
 
 variable syslog_server_port {
