@@ -3,8 +3,8 @@ resource aws_lambda_function cloudwatch_to_syslog_server {
   function_name    = "${var.name}"
   role             = "${aws_iam_role.cloudwatch_to_syslog_server.arn}"
   handler          = "index.handler"
-  source_code_hash = "${base64sha256(file("${path.module}/lambda.zip"))}"
-  runtime          = "nodejs8.10"
+  source_code_hash = "${filebase64sha256("${path.module}/lambda.zip")}"
+  runtime          = "nodejs10.x"
 
   environment {
     variables = {
