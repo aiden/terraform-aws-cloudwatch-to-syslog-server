@@ -5,6 +5,7 @@ resource aws_lambda_function cloudwatch_to_syslog_server {
   handler          = "index.handler"
   source_code_hash = "${filebase64sha256("${path.module}/lambda.zip")}"
   runtime          = "nodejs10.x"
+  timeout          = 120
 
   environment {
     variables = {
