@@ -50,9 +50,11 @@ resource aws_lambda_permission cloudwatch_logs {
   source_account = "${var.account_id}"
 }
 
+/* prod only */
 resource aws_cloudwatch_log_subscription_filter papertrail {
   name            = "${var.name}"
   log_group_name  = "${var.log_group}"
   filter_pattern  = ""
   destination_arn = "${aws_lambda_function.cloudwatch_to_syslog_server.arn}"
+  distribution    = "ByLogStream"
 }
